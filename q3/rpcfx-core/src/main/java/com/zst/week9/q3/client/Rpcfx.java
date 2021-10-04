@@ -8,6 +8,7 @@ import com.zst.week9.q3.api.LoadBalancer;
 import com.zst.week9.q3.api.Router;
 import com.zst.week9.q3.api.RpcfxRequest;
 import com.zst.week9.q3.api.RpcfxResponse;
+import net.sf.cglib.proxy.Enhancer;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -16,7 +17,6 @@ import okhttp3.RequestBody;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,14 +44,15 @@ public final class Rpcfx {
     }
 
     public static <T> T create(final Class<T> serviceClass, final String url, Filter... filters) {
-
         // 0. 替换动态代理 -> 字节码生成
-        return (T) Proxy.newProxyInstance(Rpcfx.class.getClassLoader(), new Class[]{serviceClass}, new RpcfxInvocationHandler(serviceClass, url, filters));
-
+        // 创建serviceClass类的代理类，并拦截所有的方法调用走到CglibInvocationHandler中
+        Enhancer e = new Enhancer();
+        e.setSuperclass(serviceClass);
+        e.setCallback(new CglibInvocationHandler(serviceClass, url, filters));
+        return (T) e.create();
     }
 
     public static class RpcfxInvocationHandler implements InvocationHandler {
-
         public static final MediaType JSONTYPE = MediaType.get("application/json; charset=utf-8");
 
         private final Class<?> serviceClass;

@@ -1,7 +1,5 @@
 package com.zst.week9.q3.api;
 
 public interface RpcfxResolver {
-
-    Object resolve(String serviceClass);
-
+    <T> T resolve(String serviceClass) throws ClassNotFoundException;
 }
