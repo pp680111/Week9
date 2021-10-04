@@ -7,12 +7,10 @@ import com.zst.week9.q3.api.RpcfxResponse;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 
 /**
  * Cglib中拦截方法调用的拦截器
@@ -23,11 +21,18 @@ public class CglibInvocationHandler implements MethodInterceptor {
     private final Class<?> serviceClass;
     private final String url;
     private final Filter[] filters;
+    private NettyHttpRequestClient requestClient;
 
     public <T> CglibInvocationHandler(Class<T> serviceClass, String url, Filter... filters) {
         this.serviceClass = serviceClass;
         this.url = url;
         this.filters = filters;
+        try {
+            this.requestClient = new NettyHttpRequestClient(url);
+            this.requestClient.start();
+        } catch (MalformedURLException urle) {
+            throw new IllegalArgumentException("url format error");
+        }
     }
 
     /**
@@ -36,7 +41,7 @@ public class CglibInvocationHandler implements MethodInterceptor {
      * @param method 被调用方法
      * @param args 方法调用参数列表
      * @param proxy 方法代理信息
-     * @return 
+     * @return
      * @throws Throwable
      */
     @Override
@@ -44,11 +49,13 @@ public class CglibInvocationHandler implements MethodInterceptor {
         return this.invoke(method, args);
     }
 
+    /**
+     * 负责处理远程方法调用
+     * @param method
+     * @param params
+     * @return
+     */
     public Object invoke(Method method, Object[] params) {
-
-        // 加filter地方之二
-        // mock == true, new Student("hubao");
-
         RpcfxRequest request = new RpcfxRequest();
         request.setServiceClass(this.serviceClass.getName());
         request.setMethod(method.getName());
@@ -73,28 +80,11 @@ public class CglibInvocationHandler implements MethodInterceptor {
             throw new RpcfxException(String.format("远程调用时发生错误, url=%s, 错误信息=%s", url, e.getMessage()));
         }
 
-
-        // 加filter地方之三
-        // Student.setTeacher("cuijing");
-
-        // 这里判断response.status，处理异常
-        // 考虑封装一个全局的RpcfxException
-
         return JSON.parse(response.getResult().toString());
     }
 
     private RpcfxResponse post(RpcfxRequest req, String url) throws IOException {
-        String reqJson = JSON.toJSONString(req);
-        System.out.println("req json: "+reqJson);
-
-        // 1.可以复用client
-        // 2.尝试使用httpclient或者netty client
-        OkHttpClient client = new OkHttpClient();
-        final Request request = new Request.Builder()
-                .url(url)
-                .post(RequestBody.create(JSONTYPE, reqJson))
-                .build();
-        String respJson = client.newCall(request).execute().body().string();
+        String respJson = this.requestClient.request(req);
         System.out.println("resp json: "+respJson);
         return JSON.parseObject(respJson, RpcfxResponse.class);
     }
