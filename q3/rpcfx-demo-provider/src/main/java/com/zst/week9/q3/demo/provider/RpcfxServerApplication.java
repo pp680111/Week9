@@ -81,18 +81,12 @@ public class RpcfxServerApplication {
 		return new DemoResolver();
 	}
 
-	// 能否去掉name
-	//
-
-	// annotation
-
-
-	@Bean(name = "com.zst.week9.q3.demo.api.UserService")
+	@Bean
 	public UserService createUserService(){
 		return new UserServiceImpl();
 	}
 
-	@Bean(name = "com.zst.week9.q3.demo.api.OrderService")
+	@Bean
 	public OrderService createOrderService(){
 		return new OrderServiceImpl();
 	}
