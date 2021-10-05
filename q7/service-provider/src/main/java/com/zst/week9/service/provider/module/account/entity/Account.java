@@ -14,5 +14,14 @@ public class Account {
     private int status;
     /** 货币单位*/
     private int currencyUnitType;
+
+    public static Account def() {
+        Account entity = new Account();
+        entity.setBalance("0");
+        entity.setStatus(1);
+
+        return entity;
+    }
+
 }
 

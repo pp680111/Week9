@@ -15,5 +15,15 @@ public class FrozenBalance {
     /** 货币单位*/
     private int currencyUnitType;
     /** 状态*/
-    private int Status;
+    private int status;
+    /** 创建时间*/
+    private long createTime;
+    /** 更新时间*/
+    private long updateTime;
+
+    public static FrozenBalance def() {
+        FrozenBalance entity = new FrozenBalance();
+        entity.setStatus(1);
+        return entity;
+    }
 }
