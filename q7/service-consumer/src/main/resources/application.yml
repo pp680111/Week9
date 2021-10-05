@@ -1,0 +1,9 @@
+dubbo:
+  application:
+    name: service-consumer
+    qosEnable: false
+  registry:
+    id: consumer1
+    address: zookeeper://${zookeeper.address:127.0.0.1}:2181
+  provider:
+    token: true
