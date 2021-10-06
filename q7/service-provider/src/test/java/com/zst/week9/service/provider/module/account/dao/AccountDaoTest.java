@@ -1,6 +1,6 @@
 package com.zst.week9.service.provider.module.account.dao;
 
-import com.zst.week9.service.provider.consts.CurrencyUnitTypeConsts;
+import com.zst.week9.service.api.consts.CurrencyUnitTypeConsts;
 import com.zst.week9.service.provider.module.account.entity.Account;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;

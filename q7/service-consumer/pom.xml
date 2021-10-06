@@ -16,15 +16,14 @@
             <groupId>com.zst.week9</groupId>
             <artifactId>service-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo</artifactId>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.dromara</groupId>-->
-        <!--            <artifactId>hmily-spring-boot-starter-apache-dubbo</artifactId>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>hmily-spring-boot-starter-apache-dubbo</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-dependencies-zookeeper</artifactId>
@@ -38,6 +37,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.32</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </project>

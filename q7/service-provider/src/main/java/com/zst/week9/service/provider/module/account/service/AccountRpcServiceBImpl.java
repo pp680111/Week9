@@ -1,14 +1,12 @@
 package com.zst.week9.service.provider.module.account.service;
 
 import com.zst.week9.service.api.consts.CurrencyUnitTypeConsts;
-import com.zst.week9.service.api.module.account.service.AccountRpcService;
 import com.zst.week9.service.api.module.account.service.AccountRpcServiceB;
 import com.zst.week9.service.provider.module.account.dao.AccountDao;
 import com.zst.week9.service.provider.module.account.entity.Account;
 import com.zst.week9.service.provider.module.frozenbalance.dao.FrozenBalanceDao;
 import com.zst.week9.service.provider.module.frozenbalance.entity.FrozenBalance;
 import com.zst.week9.service.provider.utils.IDGenerator;
-import org.apache.dubbo.config.annotation.DubboService;
 import org.dromara.hmily.annotation.HmilyTCC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 
-/**
- * TODO 方法需要补充参数校验逻辑
- */
-public class AccountRpcServiceImpl implements AccountRpcService {
+public class AccountRpcServiceBImpl implements AccountRpcServiceB {
     private static final Logger logger = LoggerFactory.getLogger(AccountRpcServiceImpl.class);
 
     @Autowired
@@ -64,8 +59,9 @@ public class AccountRpcServiceImpl implements AccountRpcService {
         frozenBalance.setCreateTime(System.currentTimeMillis());
         frozenBalance.setUpdateTime(System.currentTimeMillis());
         frozenBalanceDao.save(frozenBalance);
-
-        logger.info("execute try");
+        logger.info("try executed");
+//        logger.info("try phase throw Exception");
+//        throw new RuntimeException("throw exception on purpose");
     }
 
     public void confirmTransfer(long sourceUserId, String value, int sourceCurrencyUnitType,

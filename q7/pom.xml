@@ -59,6 +59,11 @@
             </dependency>
             <dependency>
                 <groupId>org.dromara</groupId>
+                <artifactId>hmily-annotation</artifactId>
+                <version>${hmily.apache-dubbo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara</groupId>
                 <artifactId>hmily-spring-boot-starter-apache-dubbo</artifactId>
                 <version>${hmily.apache-dubbo.version}</version>
             </dependency>

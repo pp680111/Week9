@@ -8,4 +8,6 @@ public interface FrozenBalanceDao {
     void update(FrozenBalance entity);
 
     FrozenBalance get(long id);
+
+    FrozenBalance getBySerialNumber(long userId, long accountId, long serialNumber);
 }

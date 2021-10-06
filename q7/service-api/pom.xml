@@ -11,5 +11,10 @@
 
     <artifactId>service-api</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>hmily-annotation</artifactId>
+        </dependency>
+    </dependencies>
 </project>

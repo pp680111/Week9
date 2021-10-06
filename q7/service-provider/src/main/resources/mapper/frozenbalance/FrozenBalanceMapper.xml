@@ -6,7 +6,7 @@
         INSERT INTO
             t_frozen_balance
         VALUES
-            (#{id}, #{userId}, #{accountId}, #{amount}, #{currencyUnitType}, #{status}, #{createTime}, #{updateTime})
+            (#{id}, #{userId}, #{accountId}, #{serialNumber}, #{amount}, #{currencyUnitType}, #{status}, #{createTime}, #{updateTime})
     </insert>
 
     <update id="update" parameterType="com.zst.week9.service.provider.module.frozenbalance.entity.FrozenBalance">
@@ -30,5 +30,16 @@
             t_frozen_balance
         WHERE
             id = #{id}
+    </select>
+
+    <select id="getBySerialNumber" resultType="com.zst.week9.service.provider.module.frozenbalance.entity.FrozenBalance">
+        SELECT
+            *
+        FROM
+            t_frozen_balance
+        WHERE
+            user_id = #{userId}
+            AND account_id = #{accountId}
+            AND serial_number = #{serialNumber}
     </select>
 </mapper>

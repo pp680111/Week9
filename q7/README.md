@@ -1,0 +1,23 @@
+记录一下写这个demo过程中遇到的问题
+* Dubbo最新的3.0.3版本中引用的SpringContext版本与一开始使用的SpringBoot 2.5.4版本中使用的SpringContext版本冲突，导致SpringBoot无法启动
+
+  处理方式：降低SpringBoot版本处理
+
+* Hmily使用ClassLoader.getResource方法获取hmily.yml文件路径，由于我的项目路径中包含中文，此方式取出的文件路径中的中文这部分就乱码了，导致无法读取到配置文件
+
+  处理方式：在启动类中手动设置hmily.conf配置项，值为配置文件路径。此处IDEA中配置的-Dhmily.conf不知为何无法识别，以后有空再看看
+
+* Hmily在没有配置mongodb的情况下，会触发自动构建mongodb相关的bean，导致程序启动失败
+
+  处理方式：SpringBoot启动时指定排除掉MongoAutoConfiguration.class
+
+* consumer中聚合了AB两个服务的RPC调用的方法，必须是一个重写自interface的方法，因为否则会导致Hmily构建代理对象时获取接口类产生ArrayIndexOutOfBoundsException
+
+* 编写Provider项目的代码时为了方便使用了同一个AccountRpcService接口，在Consumer端通过Dubbo的group属性来区分ServiceA和B，导致在Consumer的ApplicationContext中AccountRpcService有两个Bean，Hmily在调用ServiceA和ServiceB的AccountRpcService.cancel方法时获取bean失败，进而无法执行TCC事务的cancel方法
+
+  处理方式：调整为两个AccountRpcService接口，ServiceA和ServiceB各使用一个
+
+* hmily代码示例不够清晰，且文档说明也不够详细，导致使用过程中经常出现异常
+
+  解决办法：根据异常产生的地方翻阅源码找到问题产生的原因，逐个解决
+

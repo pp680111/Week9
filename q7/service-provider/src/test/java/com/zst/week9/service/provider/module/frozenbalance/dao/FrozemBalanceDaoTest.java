@@ -1,6 +1,6 @@
 package com.zst.week9.service.provider.module.frozenbalance.dao;
 
-import com.zst.week9.service.provider.consts.CurrencyUnitTypeConsts;
+import com.zst.week9.service.api.consts.CurrencyUnitTypeConsts;
 import com.zst.week9.service.provider.module.frozenbalance.entity.FrozenBalance;
 import com.zst.week9.service.provider.utils.IDGenerator;
 import org.junit.Test;

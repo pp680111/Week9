@@ -10,6 +10,8 @@ public class FrozenBalance {
     private long userId;
     /** 账户id*/
     private long accountId;
+    /** 交易序列号*/
+    private long serialNumber;
     /** 数量*/
     private String amount;
     /** 货币单位*/
