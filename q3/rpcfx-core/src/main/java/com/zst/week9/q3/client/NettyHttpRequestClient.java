@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -17,6 +18,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpVersion;
@@ -113,6 +115,7 @@ public class NettyHttpRequestClient {
                 HttpMethod.POST, this.url);
         nettyRequest.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=utf-8");
         nettyRequest.headers().set(HttpHeaderNames.CONTENT_LENGTH, Integer.toString(reqJsonBytes.length));
+        nettyRequest.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         // 没想到这里的header居然要手动设置。。。。
         nettyRequest.headers().set(HttpHeaderNames.HOST, this.url);
         nettyRequest.content().clear();
@@ -121,9 +124,10 @@ public class NettyHttpRequestClient {
 
         // 发送完请求之后阻塞自身，等待唤醒
         try {
-            semaphore.acquire();
+            semaphore.acquire(1);
         } catch (InterruptedException e) {
             // 被interrupt的话不作处理
+            logger.error(e.getLocalizedMessage(), e);
         }
 
         // 返回请求结果
@@ -146,7 +150,7 @@ public class NettyHttpRequestClient {
         protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
             nioSocketChannel.pipeline()
                     .addLast(new HttpClientCodec())
-                    .addLast(new HttpObjectAggregator(1024 * 1024))
+                    .addLast(new HttpObjectAggregator(10 * 1024 * 1024))
                     .addLast(new SyncHttpResponseHandler(this.responseRef, this.semaphore));
         }
     }
@@ -173,13 +177,14 @@ public class NettyHttpRequestClient {
             String responseValue = response.content().toString(StandardCharsets.UTF_8);
 
             // 在没有调用Client对象的request方法时接收到了HttpResponse的话输出错误日志，不做处理
-            if (!semaphore.hasQueuedThreads()) {
+            if (!semaphore.hasQueuedThreads()) { 
                 logger.error("Receive unrequest data, " + responseValue);
                 return;
             }
             // 唤醒等待中的request线程
             responseRef.set(responseValue);
-            semaphore.release();
+            semaphore.release(1);
+            response.release();
         }
     }
 }

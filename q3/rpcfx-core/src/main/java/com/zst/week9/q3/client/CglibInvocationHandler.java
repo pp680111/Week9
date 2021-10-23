@@ -7,6 +7,9 @@ import com.zst.week9.q3.api.RpcfxResponse;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -86,6 +89,18 @@ public class CglibInvocationHandler implements MethodInterceptor {
     private RpcfxResponse post(RpcfxRequest req, String url) throws IOException {
         String respJson = this.requestClient.request(req);
         System.out.println("resp json: "+respJson);
+        return JSON.parseObject(respJson, RpcfxResponse.class);
+    }
+
+    OkHttpClient client = new OkHttpClient();
+    private RpcfxResponse httpPost(RpcfxRequest req, String url) throws IOException {
+        String reqJson = JSON.toJSONString(req);
+
+        final Request request = new Request.Builder()
+                .url(url)
+                .post(RequestBody.create(JSONTYPE, reqJson))
+                .build();
+        String respJson = client.newCall(request).execute().body().string();
         return JSON.parseObject(respJson, RpcfxResponse.class);
     }
 }
